@@ -243,6 +243,12 @@ Remove the setup script:
 rm composer-setup.php
 ```
 
+Add zip packages to improve performance:
+```
+sudo apt install zip unzip php-zip
+```
+> Note: php-zip may potentially be omitted, if you installed a custom php version before as described in [PHP](#php).
+
 ## Set up the Applications
 While the Laravel documentation may cover some basics at [Getting started on Windows](https://laravel.com/docs/8.x/installation#getting-started-on-windows)
 and [Installing Sail into existing applications](https://laravel.com/docs/8.x/sail#installing-sail-into-existing-applications),
@@ -430,6 +436,8 @@ Port `41000` is only used here to illustrate our example in [Modifying the Ports
 Keep in mind that every domain that you want to use within the `Nginx Proxy Manager` still needs to be added to your `hosts` file, each simply pointing to `127.0.0.1`.
 You should now be able to call `http://domain.test` from within your browser.
 
+> Note: You can also define a `Proxy Host` for the `Nginx Proxy Manager` itself, simply by setting the `Forward Port` to `81`.
+
 ## Optional Convenience Features
 To improve your experience using WSL and Docker you can do the following adjustments as desired.
 
@@ -453,7 +461,7 @@ cp -r ./.ssh ~/.ssh
 chmod 700 $(find ~/.ssh -type d)
 chmod 600 $(find ~/.ssh -type f)
 ```
-> When using a different Terminal (e.g. PhpStorm) you may need to use the full path. 
+> When using a different Terminal (e.g. PhpStorm) you may need to use the full path.
 
 #### Key Manager
 This is only necessary if you want to perform actions which require an SSH key and do not want to enter your passphrase all the time.
@@ -491,6 +499,37 @@ cd ~
 
 Keep in mind that this should be placed at the very end of the file, since previous commands may rely on the default start directory.
 
+### Shell Aliases
+If you want to use aliases to avoid messing around with paths, options or similar, you can set them automatically for your user.
+
+Create or modify `.bash_aliases` within your home directory:
+```
+nano ~/.bash_aliases
+```
+
+> Aliases will only be available once you created a new session.
+
+#### Laravel Sail Alias
+Laravel already prepared a general documentation about Sail and [Configuring a Bash Alias](https://laravel.com/docs/8.x/sail#configuring-a-bash-alias).
+
+Simply add the following alias into your `.bash_aliases`:
+```
+alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'
+```
+
+> Keep in mind that you can only use this alias from within your application's directory and
+> a published sail file takes precedence over the one located in the vendor directory.
+
+#### Nginx Proxy Manager Alias
+As aliases can also be used to append options, you can also create an alias to manage your proxy without navigating there.
+
+Add the following alias to your `.bash_aliases`:
+```
+alias nginxproxy='docker compose -f ~/nginx-proxy/docker-compose.yml'
+```
+
+You can now use something like `nginxproxy up -d` to start your proxy in detached mode, independent of your current working directory.
+
 ## Cheatsheet
 
 ### WSL
@@ -527,7 +566,7 @@ To start your default distribution:
 wsl
 ```
 
-Configure the WSL default to WSL2.
+Configure the WSL default to WSL2:
 ```
 wsl --set-default-version 2
 ```
@@ -537,3 +576,27 @@ Define the default distribution (WSL version 2 is highly recommended!):
 ```
 wsl --set-default <name from previous command> <desired wsl version>
 ```
+
+Remove a registered distribution:
+```
+wsl --unregister <distribution>
+```
+
+Export the current state of your WSL distribution:
+```
+wsl --export <distribution> <filename or path>.tar
+```
+
+Import the current state of your WSL distribution:
+```
+wsl --import <distribution> <path for virtual disk> <filename or path>.tar
+```
+> Note: If you want to run WSL from a different drive than your system default, just run this command
+> from the specific location using relative paths, or absolute paths including the drive letter.
+>
+> * Stop the distribution
+> * Export the current state
+> * Remove the distribution
+> * Import the created .tar-file
+>
+> As applications like docker only rely on the container's name, you can move it wherever you want.
