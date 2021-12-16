@@ -84,7 +84,7 @@ wsl --set-default-version 2
 
 Install your desired Linux distribution and follow the installer:
 ```
-wsl --install -distribution Ubuntu
+wsl --install --distribution Ubuntu
 ```
 
 Check your installed WSL environments:
@@ -543,6 +543,11 @@ List container status:
 wsl --list --verbose
 ```
 > The `*` in front will mark your current default distribution:
+
+Install a distribution:
+```
+wsl --install --<distribution>
+```
 
 Stop all WSL containers:
 ```
